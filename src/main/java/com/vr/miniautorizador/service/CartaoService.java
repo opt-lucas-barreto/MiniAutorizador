@@ -1,5 +1,6 @@
 package com.vr.miniautorizador.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.vr.miniautorizador.dto.CartaoDTO;
@@ -14,5 +15,6 @@ public interface CartaoService {
     CartaoDTO insereCartao(CartaoDTO cartaoDTO) throws CartaoJaExistenteException;
     CartaoDTO atualizaSaldoCartao(CartaoDTO cartaoDTO);
     CartaoDTO getSaldoCartao(String numeroCartao);
+    BigDecimal subtraiSaldoCartao(CartaoDTO cartaoDTO, BigDecimal valor);
     
 }

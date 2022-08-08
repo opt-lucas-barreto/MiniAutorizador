@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vr.miniautorizador.dto.CartaoDTO;
+import com.vr.miniautorizador.dto.TransacaoDTO;
+import com.vr.miniautorizador.service.TransacaoService;
 
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
@@ -24,9 +27,21 @@ public class TransacaoController {
     */
     Bucket bucketRateLimite = null; 
 
+    @Autowired
+    TransacaoService transacaoService;
+    
     @PostMapping("/transacoes")
-    public ResponseEntity<?> realizaTransacao(@Valid @RequestBody CartaoDTO cartaoDTO){
-        return mountResponse(cartaoDTO, HttpStatus.ACCEPTED);
+    public ResponseEntity<?> realizaTransacao(@Valid @RequestBody TransacaoDTO transacaoDTO){
+        if(bucketRateLimite == null){
+            bucketRateLimite = transacaoService.getBucketRateLimit();
+        }
+        if(bucketRateLimite.tryConsume(1)){
+            transacaoService.realizaTransacaoCompra(transacaoDTO);
+           return mountResponse("OK", HttpStatus.OK);
+        }else{
+            return mountResponse(transacaoDTO, HttpStatus.TOO_MANY_REQUESTS);
+        }
+        
     }
 
     private ResponseEntity<?> mountResponse(Object obj, HttpStatus status){

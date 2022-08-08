@@ -1,5 +1,6 @@
 package com.vr.miniautorizador.service.impl;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,10 +27,10 @@ public class CartaoServiceImpl  implements CartaoService {
 
     
 
-    private CartaoDAO miniAutorizadorDAO;
+    private CartaoDAO cartaoDAO;
 
-    public CartaoServiceImpl(CartaoDAO miniAutorizadorDAO) {
-        this.miniAutorizadorDAO = miniAutorizadorDAO;
+    public CartaoServiceImpl(CartaoDAO cartaoDAO) {
+        this.cartaoDAO = cartaoDAO;
     }
 
     @Override
@@ -46,8 +47,8 @@ public class CartaoServiceImpl  implements CartaoService {
     public List<CartaoDTO> getAll() {
         List<CartaoDTO> cartaoDTOList = new ArrayList<>();
 
-        for(CartaoEntity miniAutorizadorEntity : miniAutorizadorDAO.findAll()){
-            cartaoDTOList.add(MiniAutorizadorUtils.miniAutorizadorEntityParaDTO(miniAutorizadorEntity));
+        for(CartaoEntity miniAutorizadorEntity : cartaoDAO.findAll()){
+            cartaoDTOList.add(MiniAutorizadorUtils.CartaoEntityParaDTO(miniAutorizadorEntity));
         }
         return cartaoDTOList;
     }
@@ -55,14 +56,17 @@ public class CartaoServiceImpl  implements CartaoService {
     @Override
     public CartaoDTO insereCartao(CartaoDTO cartaoDTO) throws CartaoJaExistenteException {
         
-        CartaoEntity miniAutorizadorEntity = 
-                miniAutorizadorDAO.findByNumCartao(cartaoDTO.getNumCartao());
+        if(cartaoDTO == null){
+            throw new CartaoInexistenteExeception();
+        }
 
-        if(miniAutorizadorEntity == null)
+        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumCartao());
+
+        if(cartaoEntity != null)
             throw new CartaoJaExistenteException();
 
         try{
-            miniAutorizadorDAO.save(MiniAutorizadorUtils.cartaoDTOParaEntity(cartaoDTO));
+            cartaoDAO.save(MiniAutorizadorUtils.cartaoDTOParaEntity(cartaoDTO));
         }catch(Exception e){
             e.printStackTrace();
             throw new MiniAutorizadorException();
@@ -74,38 +78,71 @@ public class CartaoServiceImpl  implements CartaoService {
     @Override
     public CartaoDTO atualizaSaldoCartao(CartaoDTO cartaoDTO) {
         
-        if(cartaoDTO == null || cartaoDTO.getNumCartao() == null){
+        if(cartaoDTO == null){
             throw new CartaoInexistenteExeception();
         }
 
-        CartaoEntity miniAutorizadorEntity = 
-                miniAutorizadorDAO.findByNumCartao(cartaoDTO.getNumCartao());
-
-        if(miniAutorizadorEntity == null)
-            throw new CartaoInexistenteExeception();
-
-        if(miniAutorizadorEntity.getSenha().equals(cartaoDTO.getSenha()))
-            miniAutorizadorEntity = miniAutorizadorDAO.save(miniAutorizadorEntity);
-        else
-            throw new SenhaInvalidaException();
-    
+        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumCartao());
+        verificaSenha(cartaoEntity, cartaoDTO.getSenha()); 
+  
+        return MiniAutorizadorUtils.CartaoEntityParaDTO(cartaoEntity);
         
-    
-        return MiniAutorizadorUtils.miniAutorizadorEntityParaDTO(miniAutorizadorEntity);
+    }
+
+    @Override
+    public BigDecimal subtraiSaldoCartao(CartaoDTO cartaoDTO, BigDecimal valor) {
+        
+        if(cartaoDTO == null){
+            throw new CartaoInexistenteExeception();
+        }
+
+        if(valor == null){
+            valor = BigDecimal.ZERO;
+        }
+
+        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumCartao());
+        verificaSenha(cartaoEntity, cartaoDTO.getSenha()); 
+        
+        if(cartaoEntity.getSaldo().subtract(valor).compareTo(BigDecimal.ZERO) >= 0){
+            cartaoDAO.save(cartaoEntity);
+        }
+  
+        return cartaoEntity.getSaldo();
         
     }
 
     @Override
     public CartaoDTO getSaldoCartao(String numeroCartao) {
         CartaoEntity miniAutorizadorEntity = 
-                miniAutorizadorDAO.findByNumCartao(numeroCartao);
+                cartaoDAO.findByNumCartao(numeroCartao);
 
         if(miniAutorizadorEntity == null)
             throw new CartaoInexistenteExeception();
 
-        return MiniAutorizadorUtils.miniAutorizadorEntityParaDTO(miniAutorizadorEntity);
+        return MiniAutorizadorUtils.CartaoEntityParaDTO(miniAutorizadorEntity);
     }
 
+    private CartaoEntity getCartaoPorNumeroCartao(String numeroCartao){
+        if(numeroCartao == null){
+            throw new CartaoInexistenteExeception();
+        }
+
+        CartaoEntity cartaoEntity = 
+                cartaoDAO.findByNumCartao(numeroCartao);
+
+        if(cartaoEntity == null)
+            throw new CartaoInexistenteExeception();
+
+        return cartaoEntity;
+    }
+
+    private Boolean verificaSenha(CartaoEntity cartaoEntity, String senha) {
+        
+        if(senha != null && cartaoEntity.getSenha().equals(senha))
+                return Boolean.TRUE;
+            else
+                throw new SenhaInvalidaException();
+    }
 
     
 }
