@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class MiniAutorizadorDTO {
+public class CartaoDTO {
     
     @JsonProperty
     @NotNull(message = "nome não pode ser nulo")

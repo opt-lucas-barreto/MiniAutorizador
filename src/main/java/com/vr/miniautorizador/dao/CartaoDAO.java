@@ -4,13 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
-import com.vr.miniautorizador.entity.MiniAutorizadorEntity;
+import com.vr.miniautorizador.entity.CartaoEntity;
 
 
 
 @Repository
-public interface MiniAutorizadorDAO extends JpaRepository<MiniAutorizadorEntity, Long>{
+public interface CartaoDAO extends JpaRepository<CartaoEntity, Long>{
     
     //List<MiniAutorizadorEntity> findByNumCartao(String numCartao);
-    MiniAutorizadorEntity findByNumCartao(String numCartao);
+    CartaoEntity findByNumCartao(String numCartao);
 }

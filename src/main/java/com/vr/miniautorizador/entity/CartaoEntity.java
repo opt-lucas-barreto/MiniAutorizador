@@ -15,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class MiniAutorizadorEntity {
+public class CartaoEntity {
     
     
     @javax.persistence.Id

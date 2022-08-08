@@ -7,14 +7,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.vr.miniautorizador.dao.MiniAutorizadorDAO;
-import com.vr.miniautorizador.dto.MiniAutorizadorDTO;
-import com.vr.miniautorizador.entity.MiniAutorizadorEntity;
+import com.vr.miniautorizador.dao.CartaoDAO;
+import com.vr.miniautorizador.dto.CartaoDTO;
+import com.vr.miniautorizador.entity.CartaoEntity;
 import com.vr.miniautorizador.exception.CartaoInexistenteExeception;
 import com.vr.miniautorizador.exception.CartaoJaExistenteException;
 import com.vr.miniautorizador.exception.MiniAutorizadorException;
 import com.vr.miniautorizador.exception.SenhaInvalidaException;
-import com.vr.miniautorizador.service.MiniAutorizadorService;
+import com.vr.miniautorizador.service.CartaoService;
 import com.vr.miniautorizador.util.MiniAutorizadorUtils;
 
 import io.github.bucket4j.Bandwidth;
@@ -22,13 +22,13 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 
 @Service
-public class MiniAutorizadorServiceImpl  implements MiniAutorizadorService {
+public class CartaoServiceImpl  implements CartaoService {
 
     
 
-    private MiniAutorizadorDAO miniAutorizadorDAO;
+    private CartaoDAO miniAutorizadorDAO;
 
-    public MiniAutorizadorServiceImpl(MiniAutorizadorDAO miniAutorizadorDAO) {
+    public CartaoServiceImpl(CartaoDAO miniAutorizadorDAO) {
         this.miniAutorizadorDAO = miniAutorizadorDAO;
     }
 
@@ -43,48 +43,48 @@ public class MiniAutorizadorServiceImpl  implements MiniAutorizadorService {
     }
 
     @Override
-    public List<MiniAutorizadorDTO> getAll() {
-        List<MiniAutorizadorDTO> miniAutorizadorDTOList = new ArrayList<>();
+    public List<CartaoDTO> getAll() {
+        List<CartaoDTO> cartaoDTOList = new ArrayList<>();
 
-        for(MiniAutorizadorEntity miniAutorizadorEntity : miniAutorizadorDAO.findAll()){
-            miniAutorizadorDTOList.add(MiniAutorizadorUtils.miniAutorizadorEntityParaDTO(miniAutorizadorEntity));
+        for(CartaoEntity miniAutorizadorEntity : miniAutorizadorDAO.findAll()){
+            cartaoDTOList.add(MiniAutorizadorUtils.miniAutorizadorEntityParaDTO(miniAutorizadorEntity));
         }
-        return miniAutorizadorDTOList;
+        return cartaoDTOList;
     }
 
     @Override
-    public MiniAutorizadorDTO insereCartao(MiniAutorizadorDTO miniAutorizadorDTO) throws CartaoJaExistenteException {
+    public CartaoDTO insereCartao(CartaoDTO cartaoDTO) throws CartaoJaExistenteException {
         
-        MiniAutorizadorEntity miniAutorizadorEntity = 
-                miniAutorizadorDAO.findByNumCartao(miniAutorizadorDTO.getNumCartao());
+        CartaoEntity miniAutorizadorEntity = 
+                miniAutorizadorDAO.findByNumCartao(cartaoDTO.getNumCartao());
 
         if(miniAutorizadorEntity == null)
             throw new CartaoJaExistenteException();
 
         try{
-            miniAutorizadorDAO.save(MiniAutorizadorUtils.miniAutorizadorDTOParaEntity(miniAutorizadorDTO));
+            miniAutorizadorDAO.save(MiniAutorizadorUtils.cartaoDTOParaEntity(cartaoDTO));
         }catch(Exception e){
             e.printStackTrace();
             throw new MiniAutorizadorException();
         }
-        return miniAutorizadorDTO;
+        return cartaoDTO;
         
     }
 
     @Override
-    public MiniAutorizadorDTO atualizaSaldoCartao(MiniAutorizadorDTO miniAutorizadorDTO) {
+    public CartaoDTO atualizaSaldoCartao(CartaoDTO cartaoDTO) {
         
-        if(miniAutorizadorDTO == null || miniAutorizadorDTO.getNumCartao() == null){
+        if(cartaoDTO == null || cartaoDTO.getNumCartao() == null){
             throw new CartaoInexistenteExeception();
         }
 
-        MiniAutorizadorEntity miniAutorizadorEntity = 
-                miniAutorizadorDAO.findByNumCartao(miniAutorizadorDTO.getNumCartao());
+        CartaoEntity miniAutorizadorEntity = 
+                miniAutorizadorDAO.findByNumCartao(cartaoDTO.getNumCartao());
 
         if(miniAutorizadorEntity == null)
             throw new CartaoInexistenteExeception();
 
-        if(miniAutorizadorEntity.getSenha().equals(miniAutorizadorDTO.getSenha()))
+        if(miniAutorizadorEntity.getSenha().equals(cartaoDTO.getSenha()))
             miniAutorizadorEntity = miniAutorizadorDAO.save(miniAutorizadorEntity);
         else
             throw new SenhaInvalidaException();
@@ -95,6 +95,17 @@ public class MiniAutorizadorServiceImpl  implements MiniAutorizadorService {
         
     }
 
-   
+    @Override
+    public CartaoDTO getSaldoCartao(String numeroCartao) {
+        CartaoEntity miniAutorizadorEntity = 
+                miniAutorizadorDAO.findByNumCartao(numeroCartao);
+
+        if(miniAutorizadorEntity == null)
+            throw new CartaoInexistenteExeception();
+
+        return MiniAutorizadorUtils.miniAutorizadorEntityParaDTO(miniAutorizadorEntity);
+    }
+
+
     
 }
