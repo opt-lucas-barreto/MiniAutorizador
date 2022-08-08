@@ -66,7 +66,7 @@ public class CartaoController {
     }
     
     @GetMapping("/cartoes/{numeroCartao}")
-    public ResponseEntity<?> buscaSaldo(@PathVariable String numeroCartao){
+    public ResponseEntity<?> obterSaldo(@PathVariable String numeroCartao){
         BigDecimal saldoCartao = BigDecimal.ZERO;
         CartaoDTO cartaoDTO = null;
         try{
@@ -74,7 +74,7 @@ public class CartaoController {
             saldoCartao = cartaoDTO.getSaldo();
             return mountResponse(saldoCartao, HttpStatus.OK);
         }catch(CartaoInexistenteExeception e){
-            return mountResponse(numeroCartao, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
         
     }

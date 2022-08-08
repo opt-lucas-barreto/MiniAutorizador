@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.vr.miniautorizador.exception.CartaoInexistenteExeception;
+import com.vr.miniautorizador.exception.CartaoJaExistenteException;
 import com.vr.miniautorizador.exception.MiniAutorizadorException;
 import com.vr.miniautorizador.exception.SaldoInsuficienteException;
 import com.vr.miniautorizador.exception.SenhaInvalidaException;

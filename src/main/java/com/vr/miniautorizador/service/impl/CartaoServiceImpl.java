@@ -28,6 +28,7 @@ public class CartaoServiceImpl  implements CartaoService {
 
     
 
+    private static final Double QUINHENTOS = 500.00;
     private CartaoDAO cartaoDAO;
 
     public CartaoServiceImpl(CartaoDAO cartaoDAO) {
@@ -61,12 +62,13 @@ public class CartaoServiceImpl  implements CartaoService {
             throw new CartaoInexistenteExeception();
         }
 
-        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumCartao());
+        CartaoEntity cartaoEntity = cartaoDAO.findByNumCartao(cartaoDTO.getNumCartao());
 
         if(cartaoEntity != null)
             throw new CartaoJaExistenteException();
 
         try{
+            cartaoDTO.setSaldo(BigDecimal.valueOf(QUINHENTOS).setScale(2));
             cartaoDAO.save(MiniAutorizadorUtils.cartaoDTOParaEntity(cartaoDTO));
         }catch(Exception e){
             e.printStackTrace();
@@ -110,7 +112,7 @@ public class CartaoServiceImpl  implements CartaoService {
             throw new SaldoInsuficienteException();
         }
   
-        return cartaoEntity.getSaldo();
+        return cartaoEntity.getSaldo().setScale(2);
         
     }
 
