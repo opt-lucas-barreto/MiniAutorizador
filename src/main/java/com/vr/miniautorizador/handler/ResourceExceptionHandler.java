@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.vr.miniautorizador.exception.CartaoInexistenteExeception;
 import com.vr.miniautorizador.exception.MiniAutorizadorException;
+import com.vr.miniautorizador.exception.SaldoInsuficienteException;
 import com.vr.miniautorizador.exception.SenhaInvalidaException;
 
 @RestControllerAdvice
@@ -58,6 +59,14 @@ public class ResourceExceptionHandler {
 
     @ExceptionHandler(SenhaInvalidaException.class)
     public ResponseEntity<GlobalError> handleSenhaInvalidaException(
+        HttpMessageNotReadableException e, HttpServletRequest request
+    ){
+        GlobalError globalError = new GlobalError(e.getMessage(), e.getLocalizedMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(globalError);
+    }
+
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity<GlobalError> handleSaldoInsuficienteException(
         HttpMessageNotReadableException e, HttpServletRequest request
     ){
         GlobalError globalError = new GlobalError(e.getMessage(), e.getLocalizedMessage());

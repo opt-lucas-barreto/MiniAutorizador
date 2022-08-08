@@ -14,6 +14,7 @@ import com.vr.miniautorizador.entity.CartaoEntity;
 import com.vr.miniautorizador.exception.CartaoInexistenteExeception;
 import com.vr.miniautorizador.exception.CartaoJaExistenteException;
 import com.vr.miniautorizador.exception.MiniAutorizadorException;
+import com.vr.miniautorizador.exception.SaldoInsuficienteException;
 import com.vr.miniautorizador.exception.SenhaInvalidaException;
 import com.vr.miniautorizador.service.CartaoService;
 import com.vr.miniautorizador.util.MiniAutorizadorUtils;
@@ -105,6 +106,8 @@ public class CartaoServiceImpl  implements CartaoService {
         
         if(cartaoEntity.getSaldo().subtract(valor).compareTo(BigDecimal.ZERO) >= 0){
             cartaoDAO.save(cartaoEntity);
+        }else{
+            throw new SaldoInsuficienteException();
         }
   
         return cartaoEntity.getSaldo();
