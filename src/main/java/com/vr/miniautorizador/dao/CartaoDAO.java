@@ -9,5 +9,5 @@ import com.vr.miniautorizador.entity.CartaoEntity;
 public interface CartaoDAO extends JpaRepository<CartaoEntity, Long>{
     
     //List<MiniAutorizadorEntity> findByNumCartao(String numCartao);
-    CartaoEntity findByNumCartao(String numCartao);
+    CartaoEntity findByNumeroCartao(String numeroCartao);
 }

@@ -36,6 +36,6 @@ public class TransacaoServiceImpl implements TransacaoService{
     @Override
     public BigDecimal realizaTransacaoCompra(TransacaoDTO transacaoDTO) {
         CartaoDTO cartaoDTO = MiniAutorizadorUtils.transacaDTOParaCartaoDTO(transacaoDTO);
-        return cartaoService.subtraiSaldoCartao(cartaoDTO, transacaoDTO.getValorTransacao());
+        return cartaoService.subtraiSaldoCartao(cartaoDTO, transacaoDTO.getValor());
     }
 }

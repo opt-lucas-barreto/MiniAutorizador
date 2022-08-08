@@ -28,7 +28,7 @@ public class CartaoEntity {
 
     @Getter @Setter
     @Column(unique = true)
-    private String numCartao;
+    private String numeroCartao;
 
     @Getter @Setter
     private BigDecimal saldo;

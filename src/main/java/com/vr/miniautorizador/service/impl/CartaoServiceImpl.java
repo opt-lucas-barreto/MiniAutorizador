@@ -62,7 +62,7 @@ public class CartaoServiceImpl  implements CartaoService {
             throw new CartaoInexistenteExeception();
         }
 
-        CartaoEntity cartaoEntity = cartaoDAO.findByNumCartao(cartaoDTO.getNumCartao());
+        CartaoEntity cartaoEntity = cartaoDAO.findByNumeroCartao(cartaoDTO.getNumeroCartao());
 
         if(cartaoEntity != null)
             throw new CartaoJaExistenteException();
@@ -85,7 +85,7 @@ public class CartaoServiceImpl  implements CartaoService {
             throw new CartaoInexistenteExeception();
         }
 
-        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumCartao());
+        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumeroCartao());
         verificaSenha(cartaoEntity, cartaoDTO.getSenha()); 
   
         return MiniAutorizadorUtils.CartaoEntityParaDTO(cartaoEntity);
@@ -103,10 +103,11 @@ public class CartaoServiceImpl  implements CartaoService {
             valor = BigDecimal.ZERO;
         }
 
-        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumCartao());
+        CartaoEntity cartaoEntity = getCartaoPorNumeroCartao(cartaoDTO.getNumeroCartao());
         verificaSenha(cartaoEntity, cartaoDTO.getSenha()); 
         
         if(cartaoEntity.getSaldo().subtract(valor).compareTo(BigDecimal.ZERO) >= 0){
+            cartaoEntity.setSaldo(cartaoEntity.getSaldo().subtract(valor).setScale(2));
             cartaoDAO.save(cartaoEntity);
         }else{
             throw new SaldoInsuficienteException();
@@ -119,7 +120,7 @@ public class CartaoServiceImpl  implements CartaoService {
     @Override
     public CartaoDTO getSaldoCartao(String numeroCartao) {
         CartaoEntity miniAutorizadorEntity = 
-                cartaoDAO.findByNumCartao(numeroCartao);
+                cartaoDAO.findByNumeroCartao(numeroCartao);
 
         if(miniAutorizadorEntity == null)
             throw new CartaoInexistenteExeception();
@@ -133,7 +134,7 @@ public class CartaoServiceImpl  implements CartaoService {
         }
 
         CartaoEntity cartaoEntity = 
-                cartaoDAO.findByNumCartao(numeroCartao);
+                cartaoDAO.findByNumeroCartao(numeroCartao);
 
         if(cartaoEntity == null)
             throw new CartaoInexistenteExeception();

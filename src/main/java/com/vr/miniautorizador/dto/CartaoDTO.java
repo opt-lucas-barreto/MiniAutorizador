@@ -28,7 +28,7 @@ public class CartaoDTO {
     @NotNull(message = "Número do cartão não pode ser nulo")
     @NotBlank
     @Getter @Setter
-    private String numCartao;
+    private String numeroCartao;
 
     @JsonIgnore
     @Getter @Setter

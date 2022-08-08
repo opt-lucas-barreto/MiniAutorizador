@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.vr.miniautorizador.exception.CartaoInexistenteExeception;
-import com.vr.miniautorizador.exception.CartaoJaExistenteException;
 import com.vr.miniautorizador.exception.MiniAutorizadorException;
 import com.vr.miniautorizador.exception.SaldoInsuficienteException;
 import com.vr.miniautorizador.exception.SenhaInvalidaException;
@@ -44,34 +43,31 @@ public class ResourceExceptionHandler {
 
     @ExceptionHandler(MiniAutorizadorException.class)
     public ResponseEntity<GlobalError> handleMiniAutorizadorException(
-        HttpMessageNotReadableException e, HttpServletRequest request
+        MiniAutorizadorException e, HttpServletRequest request
     ){
         GlobalError globalError = new GlobalError(e.getMessage(), e.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(globalError);
     }
 
     @ExceptionHandler(CartaoInexistenteExeception.class)
-    public ResponseEntity<GlobalError> handleCartaoInexistenteExeception(
-        HttpMessageNotReadableException e, HttpServletRequest request
+    public ResponseEntity<?> handleCartaoInexistenteExeception(
+        CartaoInexistenteExeception e, HttpServletRequest request
     ){
-        GlobalError globalError = new GlobalError(e.getMessage(), e.getLocalizedMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(globalError);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
     }
 
     @ExceptionHandler(SenhaInvalidaException.class)
-    public ResponseEntity<GlobalError> handleSenhaInvalidaException(
-        HttpMessageNotReadableException e, HttpServletRequest request
+    public ResponseEntity<?> handleSenhaInvalidaException(
+        SenhaInvalidaException e, HttpServletRequest request
     ){
-        GlobalError globalError = new GlobalError(e.getMessage(), e.getLocalizedMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(globalError);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
     }
 
     @ExceptionHandler(SaldoInsuficienteException.class)
-    public ResponseEntity<GlobalError> handleSaldoInsuficienteException(
-        HttpMessageNotReadableException e, HttpServletRequest request
+    public ResponseEntity<?> handleSaldoInsuficienteException(
+        SaldoInsuficienteException e, HttpServletRequest request
     ){
-        GlobalError globalError = new GlobalError(e.getMessage(), e.getLocalizedMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(globalError);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
     }
 
 }

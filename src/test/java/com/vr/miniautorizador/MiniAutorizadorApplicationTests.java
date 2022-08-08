@@ -1,6 +1,5 @@
 package com.vr.miniautorizador;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Assertions;

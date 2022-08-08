@@ -19,18 +19,17 @@ public class TransacaoDTO {
     @NotNull(message = "senha não pode ser nulo")
     @NotBlank
     @Getter @Setter
-    private String senha;
+    private String senhaCartao;
 
 
     @JsonProperty
     @NotNull(message = "Número do cartão não pode ser nulo")
     @NotBlank
     @Getter @Setter
-    private String numCartao;
+    private String numeroCartao;
 
     @JsonProperty
     @NotNull(message = "Valor da transação não pode ser nulo")
-    @NotBlank
     @Getter @Setter
-    private BigDecimal valorTransacao;
+    private BigDecimal valor;
 }

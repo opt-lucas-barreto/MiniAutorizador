@@ -72,7 +72,7 @@ public class CartaoController {
         try{
             cartaoDTO = miniAutorizadorService.getSaldoCartao(numeroCartao);
             saldoCartao = cartaoDTO.getSaldo();
-            return mountResponse(saldoCartao, HttpStatus.OK);
+            return ResponseEntity.ok(saldoCartao);
         }catch(CartaoInexistenteExeception e){
             return ResponseEntity.notFound().build();
         }

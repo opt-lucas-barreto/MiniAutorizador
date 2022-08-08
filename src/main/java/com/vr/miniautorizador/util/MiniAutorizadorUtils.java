@@ -12,7 +12,7 @@ public final class MiniAutorizadorUtils {
     
     public static CartaoDTO CartaoEntityParaDTO(CartaoEntity cartaoEntity){
         CartaoDTO cartaoDTO = new CartaoDTO(cartaoEntity.getSenha(),
-                                            cartaoEntity.getNumCartao(),
+                                            cartaoEntity.getNumeroCartao(),
                                             cartaoEntity.getSaldo());
         return cartaoDTO;
         
@@ -21,15 +21,15 @@ public final class MiniAutorizadorUtils {
     public static CartaoEntity cartaoDTOParaEntity(CartaoDTO cartaoDTO){
         CartaoEntity cartaoEntity = new CartaoEntity(null,
                                                     cartaoDTO.getSenha(),
-                                                    cartaoDTO.getNumCartao(),
+                                                    cartaoDTO.getNumeroCartao(),
                                                     cartaoDTO.getSaldo());
 
         return cartaoEntity;
     }
 
     public static CartaoDTO transacaDTOParaCartaoDTO(TransacaoDTO transacaoDTO) {
-        CartaoDTO cartaoDTO = new CartaoDTO(transacaoDTO.getSenha(),
-                                            transacaoDTO.getNumCartao(),
+        CartaoDTO cartaoDTO = new CartaoDTO(transacaoDTO.getSenhaCartao(),
+                                            transacaoDTO.getNumeroCartao(),
                                             null);
         return cartaoDTO;
     }
